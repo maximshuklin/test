@@ -22,15 +22,16 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+      - id: googlesheet_actions
+          uses: rjoydip/googlesheet-actions@0.1.1
+          with:
+            sheet-id: ${{ secrets.SHEET_ID }}
+        - id: echo
+          uses: actions/github-script@v2
+          with:
+            github-token: ${{secrets.GITHUB_TOKEN}}
+            script: |
+                console.log(${{steps.googlesheet_actions.outputs.data}})
+        - name: test
+          run: |
+            cat $HOME/data.json
